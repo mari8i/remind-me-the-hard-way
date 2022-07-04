@@ -24,8 +24,6 @@ TIME_ZONE = "Europe/Rome"
 CALENDAR_ID = "alessandro.mariotti@zupit.it"
 REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS = 480
 LOOP_SLEEP_TIME_SECONDS = 10
-BROWSER_NAME = "chrome"
-BROWSER_BIN_PATH = "/usr/bin/google-chrome-stable"
 
 
 # More complicated and less important settings: Mess here only if you know what you're doing
@@ -102,12 +100,6 @@ def get_today_start_end_time():
     return start_time, end_time
 
 
-def register_browser():
-    webbrowser.register(
-        BROWSER_NAME, None, webbrowser.BackgroundBrowser(BROWSER_BIN_PATH)
-    )
-
-
 def get_event_start_time(event):
     start_date_str = event["start"].get("dateTime", event["start"].get("date"))
     return datetime.datetime.fromisoformat(start_date_str)
@@ -150,8 +142,6 @@ def find_closest_conference():
 def main():
     logger.info("Setting up the browser")
 
-    register_browser()
-
     logger.info("Starting main loop")
 
     handled_events = set()
@@ -183,7 +173,7 @@ def main():
 
                 if now >= trigger_time:
                     logger.info(f"Opening event {event_name} in browser")
-                    webbrowser.get(BROWSER_NAME).open(conference_url)
+                    webbrowser.open_new_tab(conference_url)
                     handled_events.add(event["id"])
 
         time.sleep(LOOP_SLEEP_TIME_SECONDS)
