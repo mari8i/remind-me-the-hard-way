@@ -15,9 +15,9 @@ from googleapiclient.discovery import build
 
 # TODO: Read this configurations from an .env file or something
 
-TIME_ZONE = "Europe/Rome"
 
 # Easy and important settings.
+TIME_ZONE = "Europe/Rome"
 CALENDAR_ID = "alessandro.mariotti@zupit.it"
 REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS = 480
 LOOP_SLEEP_TIME_SECONDS = 10
@@ -128,10 +128,14 @@ def get_event_conference_url(event):
 
 @cached(cache=TTLCache(maxsize=1024, ttl=EVENTS_CACHE_DURATION_SECONDS))
 def find_closest_conference():
+    logger.info("Retrieving closest conference...")
     start_time, end_time = get_today_start_end_time()
-    events = get_next_events(start_time, end_time, max_results=3)
+    events = get_next_events(start_time, end_time, max_results=10)
 
-    for event in events:
+    logger.info("Filtering out all-day events")
+    filtered_events = filter(lambda e: "date" not in e["start"], events)
+
+    for event in filtered_events:
         conference_url = get_event_conference_url(event)
 
         if conference_url:
