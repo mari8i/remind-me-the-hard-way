@@ -35,7 +35,10 @@ SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
 logger = logging.getLogger("remind-me-the-hard-way")
 logger.setLevel(level=logging.INFO)
-logger.addHandler(logging.StreamHandler())
+handler = logging.StreamHandler()
+formatter = logging.Formatter("%(asctime)s : %(levelname)s : %(name)s : %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def get_next_events(
@@ -59,7 +62,9 @@ def get_next_events(
     return page.get("items", [])
 
 
+@cached(cache=TTLCache(maxsize=16, ttl=600))
 def get_credentials():
+    logger.info("Reading google calendar credentials")
     credentials = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
