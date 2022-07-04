@@ -14,7 +14,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 # TODO: Read this configurations from an .env file or something
-
+# TODO: Make logging actually useful and more clear
+# TODO: Write a README file
+# TODO: Automate black formatting and add linting with pre-commit
+# TODO: Handle multiple calendars
 
 # Easy and important settings.
 TIME_ZONE = "Europe/Rome"
