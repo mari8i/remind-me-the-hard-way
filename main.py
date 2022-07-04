@@ -46,7 +46,9 @@ def get_events(start_time: datetime.datetime, end_time: datetime.datetime):
     return results
 
 
-def get_next_events(start_time: datetime.datetime, end_time: datetime.datetime, max_results=10):
+def get_next_events(
+    start_time: datetime.datetime, end_time: datetime.datetime, max_results=10
+):
     credentials = get_credentials()
     service = build("calendar", "v3", credentials=credentials)
 
@@ -161,13 +163,20 @@ def main():
             event_name = get_event_name(event)
             event_start_time = get_event_start_time(event)
 
-            logger.info(f"Closest conference is {event_name} starting at {event_start_time}")
+            logger.info(
+                f"Closest conference is {event_name} starting at {event_start_time}"
+            )
 
             if event["id"] not in handled_events and conference_url is not None:
-                logger.info(f"Event {event_name} has not been handled, starts at {event_start_time}")
+                logger.info(
+                    f"Event {event_name} has not been handled, starts at {event_start_time}"
+                )
 
                 now = get_now()
-                if now >= (event_start_time - datetime.timedelta(seconds=REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS)):
+                if now >= (
+                    event_start_time
+                    - datetime.timedelta(seconds=REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS)
+                ):
                     logger.info(f"Opening event {event_name} in browser")
                     webbrowser.get("chrome").open(conference_url)
                     handled_events.add(event["id"])
