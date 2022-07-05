@@ -130,7 +130,15 @@ def find_closest_conference():
     logger.info("Filtering out all-day events")
     filtered_events = filter(lambda e: "date" not in e["start"], events)
 
-    for event in filtered_events:
+    now = get_now()
+
+    # The closest event (in time, w.r.t startTime) wins
+    sorted_events = sorted(
+        filtered_events,
+        key=lambda e: abs((get_event_start_time(e) - now).total_seconds()),
+    )
+
+    for event in sorted_events:
         conference_url = get_event_conference_url(event)
 
         if conference_url:
