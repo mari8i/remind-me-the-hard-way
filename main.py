@@ -22,7 +22,7 @@ from googleapiclient.discovery import build
 # Easy and important settings.
 TIME_ZONE = "Europe/Rome"
 CALENDAR_ID = "alessandro.mariotti@zupit.it"
-REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS = 480
+REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS = 30
 LOOP_SLEEP_TIME_SECONDS = 10
 
 
