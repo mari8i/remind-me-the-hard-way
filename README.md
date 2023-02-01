@@ -6,6 +6,8 @@ Automatically opens video conferences based on a google calendar.
 
 Add the `credentials.json` file in the project folder, ask to AM or LR for it.
 
+Change `CALENDAR_ID` constant in main.py:24 with your calendar ID.
+
 Then:
 - start `Automator.app`
 - select `Application`
