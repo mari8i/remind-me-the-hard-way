@@ -147,6 +147,40 @@ def find_closest_conference():
     return None
 
 
+def main_loop(handled_events):
+    logger.info("Finding closest conference")
+    closest_conference = find_closest_conference()
+    if not closest_conference:
+        logger.info("There are no events scheduled at the moment..")
+        return
+
+    event, conference_url = closest_conference
+    event_name = get_event_name(event)
+    event_start_time = get_event_start_time(event)
+
+    logger.info(
+        f"Closest conference is {event_name} starting at {event_start_time}"
+    )
+
+    if event["id"] not in handled_events and conference_url is not None:
+
+        now = get_now()
+        trigger_time = event_start_time - datetime.timedelta(
+            seconds=REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS
+        )
+        logger.info(
+            f"Event {event_name} has not been handled, starts at {event_start_time}"
+            f", trigger time is now {trigger_time}"
+        )
+
+        if now < trigger_time:
+            return
+
+        logger.info(f"Opening event {event_name} in browser")
+        webbrowser.open_new_tab(conference_url)
+        handled_events.add(event["id"])
+
+
 def main():
     logger.info("Setting up the browser")
 
@@ -154,35 +188,10 @@ def main():
 
     handled_events = set()
     while True:
-        logger.info("Finding closest conference")
-
-        closest_conference = find_closest_conference()
-        if not closest_conference:
-            logger.info("There are no events scheduled at the moment..")
-        else:
-            event, conference_url = closest_conference
-            event_name = get_event_name(event)
-            event_start_time = get_event_start_time(event)
-
-            logger.info(
-                f"Closest conference is {event_name} starting at {event_start_time}"
-            )
-
-            if event["id"] not in handled_events and conference_url is not None:
-
-                now = get_now()
-                trigger_time = event_start_time - datetime.timedelta(
-                    seconds=REMIND_ME_THE_HARD_WAY_BEFORE_SECONDS
-                )
-                logger.info(
-                    f"Event {event_name} has not been handled, starts at {event_start_time}"
-                    f", trigger time is now {trigger_time}"
-                )
-
-                if now >= trigger_time:
-                    logger.info(f"Opening event {event_name} in browser")
-                    webbrowser.open_new_tab(conference_url)
-                    handled_events.add(event["id"])
+        try:
+            main_loop(handled_events)
+        except Exception as e:
+            logger.exception("Unhandled exception", exc_info=e)
 
         time.sleep(LOOP_SLEEP_TIME_SECONDS)
 
