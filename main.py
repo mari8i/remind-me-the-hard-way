@@ -1,9 +1,9 @@
 from __future__ import print_function
 
 import datetime
-import logging
 import os.path
 import pickle
+import re
 import time
 import webbrowser
 from zoneinfo import ZoneInfo
@@ -12,6 +12,7 @@ from cachetools import cached, TTLCache
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
+from loguru import logger
 
 # TODO: Read this configurations from an .env file or something
 # TODO: Make logging actually useful and more clear
@@ -34,12 +35,7 @@ CREDENTIALS_JSON_FILENAME = "credentials.json"
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"]
 
-logger = logging.getLogger("remind-me-the-hard-way")
-logger.setLevel(level=logging.INFO)
-handler = logging.StreamHandler()
-formatter = logging.Formatter("%(asctime)s : %(levelname)s : %(name)s : %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+URL_REGEX = re.compile(r"((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)", re.DOTALL)
 
 
 def get_next_events(
@@ -118,6 +114,12 @@ def get_event_conference_url(event):
             )
         )
         return conference_url["uri"]
+
+    if "description" in event:
+        description_urls = URL_REGEX.findall(event["description"])
+        if description_urls and "teams.microsoft.com" in description_urls[0][0]:
+            return description_urls[0][0]
+
     return None
 
 
