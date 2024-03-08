@@ -31,3 +31,21 @@ _something like this_
 - add this app
 - test & done ;)
 ---
+
+## Setup on Windows
+
+### Requirements
+- Python 3.10 or earlier. This application does NOT work on Python 3.11 or later.
+
+### Steps
+
+Add the `credentials.json` file in the project folder, ask to AM or LR for it.
+
+Change `CALENDAR_ID` constant in main.py:24 with your calendar ID.
+
+Then:
+- start `init.bat` only once to install the app dependencies
+- start `start.bat` to run the application
+- (optional) If you want to run this app at computer startup, run once the `schedule.bat` script. It will create a task in the Windows Task Scheduler.
+- Enjoy 🦄
+---
